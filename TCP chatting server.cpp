@@ -36,23 +36,23 @@ void init()
 	addr.sin_addr.s_addr=inet_addr(IP);
 	if(bind(sockfd,(SA*)&addr,sizeof(addr))==-1)
 	{
-		perror("°ó¶¨Ê§°Ü\n");
-		printf("·şÎñ¶ËÆô¶¯Ê§°Ü")
+		perror("ç»‘å®šå¤±è´¥\n");
+		printf("æœåŠ¡ç«¯å¯åŠ¨å¤±è´¥")
 		exit(-1);
 	}
-	printf("³É¹¦°ó¶¨\n");
+	printf("æˆåŠŸç»‘å®š\n");
 	if(listen(sockfd,100)==-1)
 	{
-		perror("ÉèÖÃ¼àÌıÊ§°Ü\n");
-		printf("·şÎñÆ÷Æô¶¯Ê§°Ü\n");
+		perror("è®¾ç½®ç›‘å¬å¤±è´¥\n");
+		printf("æœåŠ¡å™¨å¯åŠ¨å¤±è´¥\n");
 		exit(-1);
 	}
-	printf("ÉèÖÃ¼àÌı³É¹¦\n");
-	printf("³õÊ¼»¯·şÎñÆ÷³É¹¦\n")
+	printf("è®¾ç½®ç›‘å¬æˆåŠŸ\n");
+	printf("åˆå§‹åŒ–æœåŠ¡å™¨æˆåŠŸ\n")
 }
 
 
-/*ÒÔÏÂÊÇ³¬¼¶ÉñÆæµÄ½ÓÊÜ¿Í»§¶ËµÄÏßĞÔº¯Êı*/ 
+/*ä»¥ä¸‹æ˜¯è¶…çº§ç¥å¥‡çš„æ¥å—å®¢æˆ·ç«¯çš„çº¿æ€§å‡½æ•°*/ 
 void sendMsgToALL(char*msg)
 {
 	int i=0;
@@ -104,16 +104,16 @@ void * service_thread(void*p)
 	if(strncmp(buf,"TF",2)==0)
 	{
 	if(recv(fd,filename,sizeof(filename),0)<0)
-    {
+        {
     	perror("recvfilename");
-    	printf("·şÎñÆ÷½ÓÊÕÎÄ¼ş%s fail".filename);
+    	printf("æœåŠ¡å™¨æ¥æ”¶æ–‡ä»¶%s fail".filename);
     	continue;
 	}
 	FIL*fp=foprn(filename,"wb");
 	if(fp==NULL)
 	{
 		perror("open filename");
-		printf("·şÎñÆ÷½ÓÊÕÎÄ¼ş%sÊ§°Ü",filename);
+		printf("æœåŠ¡å™¨æ¥æ”¶æ–‡ä»¶%så¤±è´¥",filename);
 		continue;
 	}
 	char buff[4096] = {0};
@@ -124,7 +124,7 @@ void * service_thread(void*p)
     	of(res<0)
     	{
     		perror("recv");
-    		printf("·şÎñÆ÷½ÓÊÕÎÄ¼ş%sÊ§°Ü",filename);
+    		printf("æœåŠ¡å™¨æ¥æ”¶æ–‡ä»¶%så¤±è´¥",filename);
     		flag=0;
     		break;
 		}
@@ -132,7 +132,7 @@ void * service_thread(void*p)
 		if(writlen<res)
 		{
 			perror("fwrite");
-		    printf("·şÎñÆ÷½ÓÊÕÎÄ¼ş%sÊ§°Ü",filename);
+		    printf("æœåŠ¡å™¨æ¥æ”¶æ–‡ä»¶%så¤±è´¥",filename);
     		flag=0;
     		break;
 		}
@@ -140,7 +140,7 @@ void * service_thread(void*p)
 		if(res>0)
 		{
 			perror("fwrite");
-		    printf("·şÎñÆ÷½ÓÊÕÎÄ¼ş%sÊ§°Ü",filename);
+		    printf("æœåŠ¡å™¨æ¥æ”¶æ–‡ä»¶%så¤±è´¥",filename);
     		flag=0;
     		break;
 		}
@@ -150,7 +150,7 @@ void * service_thread(void*p)
 		fclose(fp);
 		continue;
 	}
-	printf("³É¹¦½ÓÊÕ¿Í»§¶ËµÄÎÄ¼ş\n");
+	printf("æˆåŠŸæ¥æ”¶å®¢æˆ·ç«¯çš„æ–‡ä»¶\n");
 	fclose(fp);
 	}
 	else
@@ -161,4 +161,43 @@ void * service_thread(void*p)
 	}
 	bzero(buf,100);
 	}
+}
+//ç­‰å¾…å®¢æˆ·ç«¯è¿æ¥ï¼Œå¯åŠ¨æœåŠ¡å™¨çš„æœåŠ¡
+void service()
+{
+	printf("æœåŠ¡å™¨å¼€å§‹æœåŠ¡\n");
+	while(1)
+	{
+		struct sockaddr_in fromaddr;//å‚¨å­˜å®¢æˆ·ç«¯ip
+		socklen_t len =sizeof(fromaddr);
+		int fd =accept(sockfd,(SA*)&fromaddr,&len);
+		if(fd == -1)
+		{
+			printf("å®¢æˆ·ç«¯è¿æ¥å¤±è´¥ã€‚ã€‚\n");
+			continue;
+		}
+		c[size].fds = fd;
+		printf("fd=%d\n",fd);
+		pthread_t pid;
+		pthead_create(&pid,0,service_thread,&c[size].fds);
+	}
+}
+void sig_close()
+{
+	close(sockfd);
+	printf("æœåŠ¡ç«¯å·²ç»å…³é—­\n");
+	exit(0);
+}
+int main(void)
+{
+	signal(SIGINT,sig_close);
+	init();
+	service();
+	return 0;
+}	
+}
+}
+		}
+	}
+	
 }
