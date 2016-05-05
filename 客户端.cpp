@@ -10,12 +10,11 @@
 #include <signal.h>
  
 int sockfd;//客户端socket
-char *IP="127.0.0.1";//本地IP
-short PORT=10222;//服务器服务端口
+char *IP="127.0.0.1";//IP
+short PORT=10222;//服务器端口
 typedef struct sockaddr SA;
-char name[30];//用于存放聊天人的昵称
- 
-//客户端也分为几步:
+char name[30];//存储聊天者的昵称
+//客户端步骤
 //启动客户端，连接服务器
 void init(){
  printf("聊天室客户端开始启动\n");
@@ -33,7 +32,6 @@ void init(){
 }
 //开始通信
 void start(){
- //发送消息之前
  //启动一个线程，用来接受服务器发过来的消息
  pthread_tpid;
  void*recv_thread(void*);//线程函数的声明
